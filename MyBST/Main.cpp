@@ -42,12 +42,8 @@ public:
 	void Erase(int value) {
 		Node* temp = Find(value);
 		if (temp->data != value) return;
-		if (value < temp->parent->data) temp->parent->l_child = nullptr;
-		else temp->parent->r_child = nullptr;
-		Insert(temp->l_child);
-		Insert(temp->r_child);
-		delete temp;
 		size--;
+		Erase(temp);
 	}
 	bool IsContained(int value) const {
 		if (size == 0) return false;
@@ -71,7 +67,28 @@ private:
 		Node* r_child = nullptr;
 		Node* parent = nullptr;
 	};
-	void Clear(Node* node) {
+	static void Erase(Node* root) {
+		Node* temp = root;
+		Node* parent = temp->parent;
+		// no child case
+		if (!temp->l_child && !temp->r_child) {
+			if (parent->l_child == temp) parent->l_child = nullptr;
+			else parent->r_child = nullptr;
+			delete temp;
+			return;
+		}
+		// one child case
+		if (!temp->l_child || !temp->r_child) {
+			if (parent->l_child == temp) parent->l_child = !temp->l_child ? temp->r_child : temp->l_child;
+			else parent->r_child = !temp->r_child ? temp->l_child : temp->r_child;
+			delete temp;
+			return;
+		}
+		// two children case
+		temp->data = temp->l_child->data;
+		Erase(temp->l_child);
+	}
+	static void Clear(Node* node) {
 		if (!node) return;
 		Clear(node->l_child);
 		Clear(node->r_child);
@@ -130,7 +147,7 @@ int main() {
 	tree_c.IsContained(20); //IsContained - true;
 	tree_test.IsContained(0); //IsContained - empty container 0 test
 	tree_c.Erase(41); //41 cannot be deleted
-	tree_c.Erase(78); //5 can be deleted
+	tree_c.Erase(78); //78 can be deleted
 	std::cout << "Tree size: " << tree_c.GetSize(); //GetSize function test
 	std::cout << "\nTree components: "; tree_c.Print();
 	return 0;
