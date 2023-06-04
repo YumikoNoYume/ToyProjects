@@ -114,6 +114,7 @@ void InsertionSort(int* arr, std::size_t size) {
 			is_m.insertion_number += 2;
 			index2 -= 1;
 		}
+		is_m.comparison_number++;
 		index1 += 1;
 	}
 	auto stop = high_resolution_clock::now();
@@ -143,3 +144,4 @@ void QuickSort(int* arr, std::size_t size) {
 	qs_m.sec_time = duration_cast<milliseconds>(stop - start);
 	PrintMetrics(qs_m, arr, size);
 }
+
